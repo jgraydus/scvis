@@ -1,0 +1,13 @@
+resolver: lts-6.18
+
+ghc-options:
+  scvis: -threaded -O2
+
+packages:
+- '.'
+
+extra-deps: []
+
+flags: {}
+
+extra-package-dbs: []
