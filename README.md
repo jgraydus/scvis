@@ -28,3 +28,9 @@ displayed in the lower lefthand corner.
 ![img2](img/img2.png)
 
 ![img3](img/img3.png)
+
+### TODO
+
+  - add support for custom models
+  - add different construction methods
+  - add the ability to compute Betti numbers
