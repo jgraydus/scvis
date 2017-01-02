@@ -30,7 +30,6 @@ type P3d = Vertex3 GLfloat
 -- | A representation of the model 
 data Model = Model { modelVertices  :: !(Vector P3d)
                    , modelLines     :: !(Vector (P3d,P3d))
-                   , modelLines'    :: !(Vector (Int32,Int32))
                    , modelTriangles :: !(Vector (P3d,P3d,P3d))
                    }
 
@@ -52,7 +51,7 @@ torus n = do
 torusModel :: Int -> IO Model
 torusModel n = do
   vertices <- torus n
-  return $ Model (V.fromList vertices) V.empty V.empty V.empty
+  return $ Model (V.fromList vertices) V.empty V.empty
 
 -- | computes the distances from each vertex to each other vertex
 -- sorted from nearest to farthest. the output consists of two vectors
@@ -103,7 +102,7 @@ readModel path = withFile path ReadMode $ \handle -> do
     v <- fmap read $ hGetLine handle :: IO P3d
     M.write vertices i v
   vertices' <- V.freeze vertices
-  return $ Model vertices' V.empty V.empty V.empty
+  return $ Model vertices' V.empty V.empty
 
 -- | build a simplicial complex on the vertices of the model with the given
 -- threshold distance, then add lines and triangles to the model's geometry
@@ -129,4 +128,4 @@ makeVertex :: Float -> Float -> Float -> Vertex3 Float
 makeVertex = Vertex3
 
 makeModel :: [Vertex3 Float] -> Model
-makeModel vs = Model (V.fromList vs) V.empty V.empty V.empty
+makeModel vs = Model (V.fromList vs) V.empty V.empty
