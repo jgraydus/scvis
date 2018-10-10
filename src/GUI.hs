@@ -49,12 +49,7 @@ import Graphics.UI.GLFW (
   MouseButtonState(MouseButtonState'Pressed,MouseButtonState'Released),
   swapBuffers)
 
-import Data.IORef (
-  newIORef,
-  readIORef,
-  modifyIORef,
-  writeIORef)
-
+import Data.IORef (newIORef,readIORef,modifyIORef,writeIORef)
 import Control.Concurrent (MVar,newMVar,takeMVar,putMVar,readMVar,forkIO)
 
 import Control.Monad (forever)
@@ -63,11 +58,7 @@ import System.Exit (exitWith,ExitCode(..))
 import Data.Vector.Generic (mapM_,length)
 import Text.Printf (printf)
 
-import Model (
-  Model(..),
-  torusModel,
-  computeDistances,
-  addLinesAndTriangles)
+import Model (Model(..),torusModel,computeDistances,addLinesAndTriangles)
 
 import Graphics.UI.GLUT.Initialization as GLUT (initialize)
 import Graphics.UI.GLUT.Fonts
@@ -81,19 +72,20 @@ windowResized win w h = do
 
 -- | callback to handle key presses
 makeKeyPressHandler distances indices model dThresh = handler
-  where handler win Key'Escape _ KeyState'Pressed _ = shutdown win
-        handler win Key'Left   _ KeyState'Pressed _ = void $ forkIO $ alterThreshAndUpdateModel (-0.01)
-        handler win Key'Right  _ KeyState'Pressed _ = void $ forkIO $ alterThreshAndUpdateModel 0.01
-        handler _   _          _ _                _ = return ()
+  where
+    handler win Key'Escape _ KeyState'Pressed _ = shutdown win
+    handler win Key'Left   _ KeyState'Pressed _ = void $ forkIO $ alterThreshAndUpdateModel (-0.01)
+    handler win Key'Right  _ KeyState'Pressed _ = void $ forkIO $ alterThreshAndUpdateModel 0.01
+    handler _   _          _ _                _ = return ()
 
-        alterThreshAndUpdateModel amt = do
-          modifyIORef dThresh (max 0 . (+ amt))
-          d <- readIORef dThresh
-          m <- readMVar model
-          m' <- addLinesAndTriangles distances indices d m
-          takeMVar model
-          putMVar model m'
-          return ()
+    alterThreshAndUpdateModel amt = do
+        modifyIORef dThresh (max 0 . (+ amt))
+        d <- readIORef dThresh
+        m <- readMVar model
+        m' <- addLinesAndTriangles distances indices d m
+        takeMVar model
+        putMVar model m'
+        return ()
 
 
 -- | closes the window and exits the application
@@ -144,7 +136,6 @@ drawScene alpha beta dThresh model win = do
     color (Color4 1 1 1 0 :: Color4 Float)
     renderPrimitive Points    $ mapM_ vertex vertices
     renderPrimitive Lines     $ mapM_ (\(v1,v2) -> vertex v1 >> vertex v2) lines
-
 
   -- print the number of vertices, lines, and triangles in the top
   -- left corner

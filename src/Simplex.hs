@@ -30,22 +30,23 @@ import Data.Maybe (catMaybes)
 import Graphics.Rendering.OpenGL (Vertex3(..))
 
 
--- | represents a non-oriented 1-, 2-, or 3-simplex
+-- | represents a non-oriented n-simplex
 newtype Simplex (n :: Nat) = Simplex IntSet deriving Show
 
 toList (Simplex s) = IntSet.toList s
+fromList = Simplex . IntSet.fromList
 
 -- | aka vertex
 simplex0 :: Int -> Simplex 0
 simplex0 = Simplex . IntSet.singleton
 
--- | aka edge. arguments must be distinct integers but no error checking is done
+-- | aka edge. arguments must be distinct integers. this is not checked
 simplex1 :: Int -> Int -> Simplex 1
-simplex1 x y = Simplex $ IntSet.fromList [x,y]
+simplex1 x y = fromList [x,y]
 
--- | aka triangle. arguments must be distinct integers but no error checking is done
+-- | aka triangle. arguments must be distinct integers. this is not checked
 simplex2 :: Int -> Int -> Int -> Simplex 2
-simplex2 x y z = Simplex $ IntSet.fromList [x,y,z]
+simplex2 x y z = fromList [x,y,z]
 
 size :: Simplex n -> Int
 size (Simplex s) = IntSet.size s
@@ -86,10 +87,10 @@ boundaryMatrix s1 s2 = B { rows = r, cols = c, _data = d }
 rank :: MonadIO m => BoundaryMatrix n -> m Int
 rank = error "not implemented"
 
--- | returns 1-, and 2- simplices of Rips complex determined by thresh on vertices
+-- | returns 1-, and 2- simplices of Rips complex determined by threshold on vertices
 makeSimplicialComplex ::
      Vector (Vertex3 Float)      -- | vertex coordinates
-  -> Float                         -- | distance threshold
+  -> Float                       -- | distance threshold
   -> Vector Float                -- | distance array
   -> Vector Int32                -- | indices corresponding to distance array
   -> (Vector (Simplex 1), Vector (Simplex 2))
